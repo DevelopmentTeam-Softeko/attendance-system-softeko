@@ -1,0 +1,39 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Employee {
+  id         Int          @id @unique
+  name       String
+  email      String       @unique
+  role       ROLE         @default(EMPLOYEE)
+  password   String
+  createdAt  DateTime     @default(now())
+  updatedAt  DateTime     @updatedAt
+  attendance Attendance[]
+}
+
+model Attendance {
+  id           String    @id @default(cuid())
+  date         DateTime  @default(now())
+  clockIn      DateTime  @default(now())
+  clockOut     DateTime?
+  clockInDesc  String?
+  clockOutDesc String?
+
+  employee   Employee @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+  employeeId Int
+
+  @@index([employeeId])
+  @@index([date])
+}
+
+enum ROLE {
+  EMPLOYEE
+  ADMIN
+}
