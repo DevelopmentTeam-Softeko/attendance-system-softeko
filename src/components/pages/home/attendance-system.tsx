@@ -33,11 +33,20 @@ export default function AttendanceSystem({ employeeAttendance }: Props) {
   const [description, setDescription] = useState("");
   const [actionType, setActionType] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [isMounted, setIsMounted] = useState(false);
+  const [employeeId, setEmployeeId] = useState(
+    employeeAttendance?.employee?.id
+  );
+  const [attendanceId, setAttendanceId] = useState(
+    employeeAttendance?.data?.id
+  );
 
   const router = useRouter();
 
   // Handle initial state setup based on employeeAttendance
   useEffect(() => {
+    setIsMounted(true);
+
     const isClockIn = !!employeeAttendance?.data?.clockIn;
     const isClockOut = !!employeeAttendance?.data?.clockOut;
 
@@ -57,6 +66,11 @@ export default function AttendanceSystem({ employeeAttendance }: Props) {
     setButtonDisabled(isClockIn && isClockOut);
   }, [employeeAttendance]);
 
+  useEffect(() => {
+    setEmployeeId(employeeAttendance?.employee?.id);
+    setAttendanceId(employeeAttendance?.data?.id);
+  }, [employeeAttendance]);
+
   const handleOpenModal = (type: string) => {
     setActionType(type);
     setIsModalOpen(true);
@@ -68,20 +82,19 @@ export default function AttendanceSystem({ employeeAttendance }: Props) {
   };
 
   const handleConfirm = async () => {
+    setIsLoading(true);
     try {
-      setIsLoading(true);
-
       const bodyData = {
-        employeeId: employeeAttendance?.employee?.id ?? "",
-        description,
+        employeeId: employeeId,
+        clockInDesc: description,
       };
 
       const { data } =
         actionType === "in"
           ? await axios.post("/api/v1/attendance", bodyData)
           : await axios.patch("/api/v1/attendance", {
-              id: employeeAttendance?.data?.id ?? "",
-              description,
+              id: attendanceId,
+              clockOutDesc: description,
             });
 
       if (data) {
@@ -94,17 +107,56 @@ export default function AttendanceSystem({ employeeAttendance }: Props) {
           setButtonDisabled(true);
         }
       }
+
+      if (data.status) {
+        toast.success(data.message);
+      } else {
+        toast.error(data.message);
+      }
       router.refresh();
-      toast.success(data.message);
+
+      setIsLoading(false);
     } catch (error) {
       console.error("Error calling API:", error);
       toast.error("Error calling API");
-    } finally {
-      setIsLoading(false);
     }
 
     handleCloseModal();
   };
+
+  if (!isMounted) {
+    return (
+      <div className="flex min-h-[80vh] flex-col items-center justify-center bg-background p-4">
+        <div className="w-full max-w-md rounded-lg border border-border bg-card p-8 shadow-sm">
+          <h1 className="mb-6 text-center text-2xl font-bold">
+            {employeeAttendance.employee.name.toLocaleUpperCase()}
+          </h1>
+
+          {/* Render disabled buttons during loading */}
+          <div className="flex gap-4">
+            <Button
+              disabled={true}
+              className="flex-1"
+              size="lg"
+              variant="default"
+            >
+              <LogIn className="mr-2 h-4 w-4" />
+              Check In
+            </Button>
+            <Button
+              disabled={true}
+              className="flex-1"
+              size="lg"
+              variant="destructive"
+            >
+              <LogOut className="mr-2 h-4 w-4" />
+              Check Out
+            </Button>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="flex min-h-[80vh] flex-col items-center justify-center bg-background p-4">

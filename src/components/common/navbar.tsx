@@ -1,10 +1,20 @@
 import Link from "next/link";
 import LogoutButton from "./logout-button";
+import { cookies } from "next/headers";
+import prisma from "@/lib/prisma";
 
 export default async function Navbar() {
-  const user = {
-    role: "ADMIN",
-  };
+  const cookieStore = cookies();
+  const employeeId = cookieStore.get("employeeId")?.value;
+
+  const employee = await prisma.employee.findUnique({
+    where: {
+      id: Number(employeeId),
+    },
+    select: {
+      role: true,
+    },
+  });
 
   return (
     <nav className="bg-background border-b border-border">
@@ -24,7 +34,7 @@ export default async function Navbar() {
                 Dashboard
               </Link>
 
-              {user?.role === "ADMIN" ? (
+              {employee?.role === "ADMIN" ? (
                 <>
                   <Link
                     href="/employees"

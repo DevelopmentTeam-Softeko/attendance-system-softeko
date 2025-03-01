@@ -2,9 +2,9 @@ import useSWR from "swr";
 
 const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
-function useFetch(url: string) {
+function useFetch(url: string | null) {
   const { data, error, isLoading } = useSWR(url, fetcher, {
-    refreshInterval: 1000,
+    // refreshInterval: 10,
   });
 
   return {

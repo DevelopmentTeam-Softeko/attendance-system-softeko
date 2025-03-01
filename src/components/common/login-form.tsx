@@ -9,6 +9,7 @@ import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import { useState } from "react";
 import { Loader } from "lucide-react";
+import Link from "next/link";
 
 export function LoginForm({
   className,
@@ -33,15 +34,16 @@ export function LoginForm({
       const { data } = await axios.post("/api/v1/auth/login", fromData);
 
       if (data.status) {
-        router.push("/");
         toast.success(data.message);
       } else {
         toast.error(data.message);
       }
+
+      router.push("/");
+      router.refresh();
+      setLoading(false);
     } catch (error) {
       console.error(error);
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -70,12 +72,12 @@ export function LoginForm({
               <div className="grid gap-2">
                 <div className="flex items-center">
                   <Label htmlFor="password">Password</Label>
-                  <a
-                    href="#"
+                  <Link
+                    href="/forgot-password"
                     className="ml-auto text-sm underline-offset-2 hover:underline"
                   >
                     Forgot your password?
-                  </a>
+                  </Link>
                 </div>
                 <Input id="password" name="password" type="password" required />
               </div>

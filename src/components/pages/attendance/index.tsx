@@ -6,8 +6,8 @@ import AttendanceList from "./attendance-list";
 import { EmployeeAttendanceList } from "@/utils/APIType";
 import TableSkeleton from "./skeleton";
 
-const AttendanceIndex = () => {
-  const employeeId = 130;
+const AttendanceIndex = ({ id }: { id: string | undefined }) => {
+  const employeeId = Number(id);
   const { data, isError, isLoading } = useFetch(
     `/api/v1/attendance/${employeeId}`
   );

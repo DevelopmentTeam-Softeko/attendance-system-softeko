@@ -21,6 +21,12 @@ export type GetEmployees = {
   name: string;
   email: string;
   role: string;
+  attendance: {
+    id: string;
+    date: Date;
+    clockIn: Date;
+    clockOut: Date;
+  }[];
 };
 
 export type EmployeeAttendanceList = {

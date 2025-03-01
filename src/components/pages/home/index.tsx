@@ -1,37 +1,34 @@
-"use client";
 import React from "react";
 import dynamic from "next/dynamic";
-import AttendanceSystemSkeleton from "./attendance-system-skeleton";
-import useFetch from "@/app/hooks/useFetch";
 import { GetCurrentEmployeeResponse } from "@/utils/APIType";
 
+import API from "@/utils/API";
+import { cookies } from "next/headers";
+import AttendanceSystemSkeleton from "./attendance-system-skeleton";
+
 const AttendanceSystem = dynamic(
-  () => import("@/components/pages/home/attendance-system"),
-  {
-    loading: () => <AttendanceSystemSkeleton />,
-  }
+  () => import("@/components/pages/home/attendance-system")
 );
 
-const HomeIndex = () => {
-  const employeeId = 130;
+const HomeIndex = async () => {
+  const cookieStore = cookies();
+  const employeeId = cookieStore.get("employeeId")?.value;
 
-  const { data, isError, isLoading } = useFetch(
-    `/api/v1/attendance/${employeeId}/current-day`
-  );
-
-  if (isLoading) {
-    return <AttendanceSystemSkeleton />;
+  if (!employeeId) {
+    return <div>Employee not found, Please login again</div>;
   }
 
-  if (isError) {
-    return <div>Error</div>;
-  }
+  const attendanceData = await API.getSingleEmployeeData(employeeId as string);
 
   return (
     <div>
-      <AttendanceSystem
-        employeeAttendance={data as GetCurrentEmployeeResponse}
-      />
+      {attendanceData ? (
+        <AttendanceSystem
+          employeeAttendance={attendanceData as GetCurrentEmployeeResponse}
+        />
+      ) : (
+        <AttendanceSystemSkeleton />
+      )}
     </div>
   );
 };

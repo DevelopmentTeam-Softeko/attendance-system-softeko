@@ -32,12 +32,14 @@ export async function GET(request: NextRequest) {
           lte: toDate,
         },
       };
-    } else if (from) {
+    } else if (from && !to) {
       const fromDate = new Date(from);
-      fromDate.setUTCHours(0, 0, 0, 0);
+      // Reset to midnight in local timezone
+      fromDate.setHours(0, 0, 0, 0);
 
       const endOfDay = new Date(from);
-      endOfDay.setUTCHours(23, 59, 59, 999);
+      // Set to end of day in local timezone
+      endOfDay.setHours(23, 59, 59, 999);
 
       if (isNaN(fromDate.getTime())) {
         return NextResponse.json({
@@ -49,15 +51,29 @@ export async function GET(request: NextRequest) {
       whereClause = {
         date: {
           gte: fromDate,
-          lte: endOfDay, // Ensure we get the full day for "today" option
+          lte: endOfDay,
         },
       };
     } else if (!from && !to) {
-      const startOfDay = new Date();
-      startOfDay.setUTCHours(0, 0, 0, 0);
-
-      const endOfDay = new Date();
-      endOfDay.setUTCHours(23, 59, 59, 999);
+      // For today's date, use local timezone rather than UTC
+      const today = new Date();
+      const startOfDay = new Date(
+        today.getFullYear(),
+        today.getMonth(),
+        today.getDate(),
+        0,
+        0,
+        0
+      );
+      const endOfDay = new Date(
+        today.getFullYear(),
+        today.getMonth(),
+        today.getDate(),
+        23,
+        59,
+        59,
+        999
+      );
 
       whereClause = {
         date: {

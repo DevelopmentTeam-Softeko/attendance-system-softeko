@@ -8,8 +8,8 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
-import Link from "next/link";
 import { GetEmployees } from "@/utils/APIType";
+import AttendanceVideModal from "./view-attendance-modal";
 
 type Props = {
   data: GetEmployees[];
@@ -41,13 +41,7 @@ export default function EmployeeList({ data }: Props) {
               <TableCell>{record.email}</TableCell>
               <TableCell>{record.role}</TableCell>
               <TableCell>
-                <Link
-                  href={`/attendance/${record.id}`}
-                  target="_blank"
-                  className="text-blue-500"
-                >
-                  View Attendance
-                </Link>
+                <AttendanceVideModal record={record} />
               </TableCell>
             </TableRow>
           ))}
