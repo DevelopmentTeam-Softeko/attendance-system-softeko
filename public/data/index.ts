@@ -80,12 +80,6 @@ export const employeeArray = [
     password: "522514",
   },
   {
-    id: 132,
-    name: "Atik Ullah Khan",
-    email: "atikullah.khan@softeko.co",
-    password: "920573",
-  },
-  {
     id: 135,
     name: "Shafiuddin",
     email: "shafiuddin.haider@softeko.co",
