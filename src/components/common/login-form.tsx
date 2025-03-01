@@ -10,6 +10,7 @@ import toast from "react-hot-toast";
 import { useState } from "react";
 import { Loader } from "lucide-react";
 import Link from "next/link";
+import { employeeArray } from "../../../public/data";
 
 export function LoginForm({
   className,
@@ -31,6 +32,17 @@ export function LoginForm({
 
     try {
       setLoading(true);
+
+      const checkEmployee = employeeArray.find(
+        (employee) => employee.email === email
+      );
+
+      if (!checkEmployee) {
+        toast.error("Your email is not registered with us.");
+        setLoading(false);
+        return;
+      }
+
       const { data } = await axios.post("/api/v1/auth/login", fromData);
 
       if (data.status) {
