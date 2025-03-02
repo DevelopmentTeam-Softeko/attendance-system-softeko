@@ -47,6 +47,8 @@ export function LoginForm({
 
       if (data.status) {
         toast.success(data.message);
+        formData.set("email", "");
+        formData.set("password", "");
       } else {
         toast.error(data.message);
       }
@@ -93,7 +95,11 @@ export function LoginForm({
                 </div>
                 <Input id="password" name="password" type="password" required />
               </div>
-              <Button type="submit" className="w-full cursor-pointer">
+              <Button
+                type="submit"
+                className="w-full cursor-pointer"
+                disabled={loading}
+              >
                 {loading ? <Loader /> : "Login"}
               </Button>
             </div>

@@ -10,7 +10,6 @@ import {
 } from "@/components/ui/table";
 import { AttendanceListType } from "@/utils/APIType";
 import helpers from "@/utils/helpers";
-import Link from "next/link";
 import React from "react";
 
 type Props = {
@@ -37,7 +36,6 @@ const TableBodySection = ({ attendanceListData, loading }: Props) => {
             <TableHead>Date</TableHead>
             <TableHead>Check In</TableHead>
             <TableHead>Check Out</TableHead>
-            <TableHead className="text-right"> Action </TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -76,15 +74,6 @@ const TableBodySection = ({ attendanceListData, loading }: Props) => {
                   {record.clockOut
                     ? helpers.formatTime(new Date(record.clockOut))
                     : "—"}
-                </TableCell>
-                <TableCell className="text-right">
-                  <Link
-                    href={`/attendance/${record.employee.id}`}
-                    target="_blank"
-                    className="text-blue-500 hover:text-blue-700 font-medium"
-                  >
-                    Attendance Details
-                  </Link>
                 </TableCell>
               </TableRow>
             ))

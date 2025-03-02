@@ -41,7 +41,8 @@ const AttendanceVideModal = ({ record }: Props) => {
           <DialogContent className="w-3/4">
             <Table>
               <TableCaption>
-                A list of your recent attendance records.
+                A list of <span className="font-bold">{record.name} </span>{" "}
+                recent attendance records.
               </TableCaption>
               <TableHeader>
                 <TableRow>
